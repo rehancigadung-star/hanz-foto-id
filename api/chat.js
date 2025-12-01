@@ -32,8 +32,10 @@ export default async (req, res) => {
 
   combinedPrompt += "Zyro:";
 
-  if (!process.env.REPLICATE_API_TOKEN) {
-    return res.status(500).json({ error: "Token API Replicate belum disetel di Vercel." });
+  const apiKey = process.env.GEMINI_API_KEY; // <- ganti di sini
+
+  if (!apiKey) {
+    return res.status(500).json({ error: "GEMINI_API_KEY belum disetel di Vercel." });
   }
 
   try {
@@ -41,7 +43,7 @@ export default async (req, res) => {
     const createPredictionResponse = await fetch(`https://api.replicate.com/v1/predictions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Token ${process.env.REPLICATE_API_TOKEN}`,
+        'Authorization': `Token ${apiKey}`, // <- pakai GEMINI_API_KEY
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -72,7 +74,7 @@ export default async (req, res) => {
     while (!['succeeded', 'failed', 'canceled'].includes(predictionData.status)) {
       await new Promise(resolve => setTimeout(resolve, 1500));
       const pollResponse = await fetch(predictionUrl, {
-        headers: { 'Authorization': `Token ${process.env.REPLICATE_API_TOKEN}` },
+        headers: { 'Authorization': `Token ${apiKey}` }, // <- pakai GEMINI_API_KEY
       });
       predictionData = await pollResponse.json();
     }
