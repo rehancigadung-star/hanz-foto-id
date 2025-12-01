@@ -1,12 +1,12 @@
 {
   "name": "zyro-ai-chat",
   "version": "1.0.0",
-  "description": "Zyro AI Chatbot - Frontend HTML + Backend Vercel Function (Mistral 7B)",
+  "description": "Zyro AI Chatbot - Frontend HTML + Backend Vercel Function (Mistral 7B) dengan support lampiran gambar",
   "main": "index.js",
   "scripts": {
     "dev": "vercel dev",
     "start": "vercel dev",
-    "build": "echo \"No build step required for static HTML frontend\""
+    "build": "echo \"Tidak ada build step untuk frontend HTML\""
   },
   "author": "HanzNesia87",
   "license": "MIT",
