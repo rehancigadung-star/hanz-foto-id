@@ -1,0 +1,18 @@
+{
+  "name": "zyro-ai-chat",
+  "version": "1.0.0",
+  "description": "Zyro AI Chatbot - Frontend HTML + Backend Vercel Function (Mistral 7B)",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel dev",
+    "build": "echo \"No build step required for static HTML frontend\""
+  },
+  "author": "HanzNesia87",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^3.4.1"
+  },
+  "devDependencies": {},
+  "type": "module"
+}
