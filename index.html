@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zyro AI - Powered by HanzNesia87</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* --- CSS (Gaya Mirip Lioner - Dark Mode) --- */
+        :root {
+            /* Tema Gelap Default */
+            --background-color: #0c0c0c; 
+            --container-bg: #1a1a1a;
+            --primary-color: #3b82f6; 
+            --text-color: #ffffff;
+            --input-bg: #2b2b2b; 
+            --border-color: #333333;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* --- STYLING UTAMA (DIHILANGKAN UNTUK KERINGKASAN) --- */
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background-color: var(--background-color);
+            padding: 0;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 768px;
+            min-height: 100vh;
+            background: var(--container-bg);
+            box-shadow: none; 
+            display: flex;
+            flex-direction: column;
+            border-radius: 0;
+            overflow-y: auto; 
+            transition: background-color 0.3s ease;
+        }
+
+        header {
+            background-color: var(--container-bg);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0; 
+            position: sticky; 
+            top: 0;
+            z-index: 10;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .logo-branding-area {
+            display: flex;
+            align-items: center; 
+        }
+
+        .logo-image {
+            width: 40px; 
+            height: 40px;
+            border-radius: 6px; 
+            margin-right: 12px; 
+            box-sizing: border-box;
+        }
+
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+            align-items: flex-start;
+        }
+
+        .logo-area strong {
+            font-size: 1.5em; 
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .logo-area span {
+            font-size: 0.8em; 
+            color: #999999; 
+        }
+
+        #theme-toggle {
+            background-color: transparent; 
+            color: var(--text-color); 
+            border: 1px solid var(--border-color); 
+            padding: 8px 15px;
+            border-radius: 8px; 
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s, border-color 0.2s, color 0.3s ease;
+        }
+        
+        #theme-toggle:hover {
+            background-color: #333333;
+            border-color: #4a4a4a;
+        }
+
+        #chat-output {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: var(--container-bg);
+            display: flex;
+            flex-direction: column; 
+            gap: 15px; 
+            flex-shrink: 1; 
+            justify-content: flex-start; 
+            align-items: flex-start;
+            min-height: calc(100vh - 60px - 70px); 
+        }
+        
+        #welcome-message {
+            text-align: center;
+            color: #888;
+            font-size: 1.1em;
+            padding: 20px;
+            max-width: 60%;
+            opacity: 0.8;
+            
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        
+        #welcome-message strong {
+            display: block;
+            font-size: 1.8em;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            text-align: center;
+            font-style: normal; 
+        }
+        
+        #welcome-message p {
+            text-align: center;
+            font-style: normal; 
+        }
+
+        .message-container {
+            margin-bottom: 0; 
+            display: flex;
+            width: 100%; 
+        }
+        
+        .user-message-box {
+            align-self: flex-end;
+            margin-left: auto; 
+            max-width: 80%;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 12px 12px 0 12px;
+            word-wrap: break-word;
+            line-height: 1.4;
+            font-size: 0.9em;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+        
+        .user-message-box img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+
+        .ai-response-box {
+            align-self: flex-start;
+            margin-right: auto; 
+            max-width: 80%;
+            background-color: var(--input-bg); 
+            color: var(--text-color);
+            padding: 10px 15px;
+            border-radius: 12px 12px 12px 0;
+            word-wrap: break-word;
+            line-height: 1.4;
+            font-size: 0.9em;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .read-button {
+            margin-top: 10px; 
+            padding: 4px 10px;
+            background-color: #4a4a4a; 
+            color: white;
+            border: none;
+            border-radius: 10px; 
+            font-size: 10px; 
+            cursor: pointer;
+            float: left; 
+            transition: background-color 0.2s;
+            clear: both; 
+        }
+        
+        .read-button:hover {
+            background-color: #5e5e5e;
+        }
+
+        .input-area {
+            padding: 10px 15px; 
+            display: flex;
+            align-items: center; 
+            background-color: var(--container-bg);
+            border-top: 1px solid var(--border-color);
+            flex-shrink: 0; 
+            z-index: 20; 
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        #file-input {
+            display: none; /* Sembunyikan input file asli */
+        }
+        
+        #attach-button {
+            background-color: transparent; 
+            color: var(--text-color);
+            border: none;
+            padding: 12px;
+            cursor: pointer;
+            font-size: 1.2em;
+            margin-right: 8px;
+            transition: color 0.2s;
+        }
+        
+        #attach-button:hover {
+            color: var(--primary-color);
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 12px 18px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 24px; 
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1em;
+            margin-right: 12px; 
+            outline: none;
+            transition: box-shadow 0.2s, border-color 0.2s, background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        #user-input:focus {
+            box-shadow: 0 0 0 2px var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        #send-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px; 
+            width: 70px; 
+            height: 48px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            font-size: 1em; 
+            font-weight: 600; 
+        }
+        
+        #send-button:hover:not(:disabled) {
+            background-color: #3070d6;
+        }
+
+        #send-button:disabled {
+            background-color: #4a4a4a;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .loading {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid var(--text-color);
+            border-radius: 50%;
+            width: 16px; 
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Gaya Pratinjau Gambar di Input */
+        #image-preview-container {
+            display: flex;
+            align-items: center;
+            padding: 5px 15px;
+            background-color: var(--input-bg);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        #image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 8px;
+            margin-right: 15px;
+            object-fit: contain;
+        }
+        
+        #remove-image-button {
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-branding-area">
+                <img src="https://telegra.ph/file/55a015283055336dc2997.jpg" alt="Logo Zyro" class="logo-image">
+                <div class="logo-area">
+                    <strong>Zyro</strong>
+                    <span>Powered by HanzNesia87</span>
+                </div>
+            </div>
+            <button id="theme-toggle">Light/Dark</button>
+        </header>
+
+        <div id="image-preview-container" style="display:none;">
+            <img id="image-preview" src="#" alt="Pratinjau Gambar" />
+            <button id="remove-image-button">
+                <i class="fas fa-times-circle"></i>
+            </button>
+        </div>
+        
+        <div id="chat-output">
+            <div class="message-container initial-greeting">
+                <div class="ai-response-box" data-text="Halo! Saya Zyro. Saya Dibuat Oleh HanzNesia87, Senang Bertemu Denganmu!">
+                    Halo! Saya Zyro. Saya Dibuat Oleh HanzNesia87, Senang Bertemu Denganmu!
+                    <button class="read-button">Bacakan</button>
+                </div>
+            </div>
+            <div id="welcome-message">
+                <strong>Zyro</strong>
+                <p>Apa yang bisa saya bantu?</p>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input type="file" id="file-input" accept="image/*"> 
+            
+            <button id="attach-button" title="Lampirkan Gambar">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            
+            <input type="text" id="user-input" placeholder="Tulis pesan...">
+            <button id="send-button">Kirim</button>
+        </div>
+    </div>
+        <script>
+        
+        const API_KEY = ""; 
+        const MODEL_NAME = "gemini-2.5-flash"; 
+        const API_URL = "/api/chat"; 
+        
+        // Deklarasi variabel di scope global (untuk diakses di sendMessage dan DOMContentLoaded)
+        let inputField;
+        let sendButton;
+        let chatOutput;
+        let themeToggle;
+        let welcomeMessage;
+        let fileInput;
+        let attachButton;
+        let imagePreviewContainer;
+        let imagePreview;
+        let removeImageButton;
+
+
+        let history = []; 
+        let attachedImage = null; 
+        
+        const CUSTOM_NAME_RESPONSE = "Nama saya **Zyro**, saya adalah model bahasa besar yang **dibuat oleh HanzNesia87 dan dilatih oleh Google**. Ada lagi yang bisa saya bantu?";
+
+        
+        // --- FUNGSI BACAKAN TEKS ---
+        function bacakanTeks(tombol) {
+            window.speechSynthesis.cancel();
+            
+            const responseBox = tombol.closest('.ai-response-box');
+            if (!responseBox) return; 
+
+            const teksLengkap = responseBox.getAttribute('data-text').trim();
+
+            if (!teksLengkap || !('speechSynthesis' in window)) {
+                if (!('speechSynthesis' in window)) {
+                    console.warn("Fitur Text-to-Speech tidak didukung.");
+                }
+                return;
+            }
+
+            const chunks = teksLengkap.split(/[\.\n\?!;…]/g).filter(chunk => chunk.trim() !== '');
+
+            function speakChunk(index) {
+                if (index >= chunks.length) {
+                    return; 
+                }
+
+                let chunk = chunks[index].trim();
+                
+                if (chunk.length < 5) {
+                    chunk += ',';
+                }
+                
+                if (!/[.!?]$/.test(chunk)) {
+                    chunk += '.'; 
+                }
+
+                const ucapan = new SpeechSynthesisUtterance(chunk); 
+                ucapan.lang = 'id-ID'; 
+                
+                ucapan.onend = () => {
+                    speakChunk(index + 1);
+                };
+
+                ucapan.onerror = (e) => {
+                    console.error('Speech error:', e);
+                    speakChunk(index + 1);
+                };
+
+                window.speechSynthesis.speak(ucapan);
+            }
+
+            speakChunk(0);
+        }
+        // --- AKHIR FUNGSI TTS ---
+
+
+        // Fungsi displayMessage 
+        function displayMessage(content, type, imageSrc = null) {
+            if (welcomeMessage) {
+                welcomeMessage.style.display = 'none';
+            }
+            
+            const containerDiv = document.createElement('div');
+            containerDiv.className = 'message-container';
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'user' ? 'user-message-box' : 'ai-response-box';
+            
+            let htmlContent = content.replace(/\n/g, '<br>');
+            htmlContent = htmlContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            if (imageSrc) {
+                htmlContent = `<img src="${imageSrc}" alt="Gambar yang dikirim"> <br>` + htmlContent;
+            }
+            
+            messageDiv.innerHTML = htmlContent; 
+            
+            if (type === 'ai') {
+                messageDiv.setAttribute('data-text', content.replace(/\*\*/g, '')); 
+                
+                const readButton = document.createElement('button');
+                readButton.className = 'read-button';
+                readButton.textContent = 'Bacakan';
+                
+                // Pasang event listener bacakanTeks di sini
+                readButton.addEventListener('click', function() {
+                    bacakanTeks(this);
+                });
+                
+                messageDiv.appendChild(readButton);
+            }
+            
+            containerDiv.appendChild(messageDiv);
+            
+            chatOutput.appendChild(containerDiv);
+
+            chatOutput.scrollTop = chatOutput.scrollHeight;
+            return messageDiv;
+        }
+        
+        // Fungsi sendMessage 
+        async function sendMessage() {
+            const userText = inputField.value.trim();
+            
+            if (userText === "" && attachedImage === null) return;
+
+            if (welcomeMessage) {
+                welcomeMessage.style.display = 'none';
+            }
+            
+            displayMessage(userText || "(Gambar terlampir)", 'user', attachedImage ? imagePreview.src : null);
+            
+            const userParts = [];
+            let textToSend = userText; 
+            
+            if (attachedImage) {
+                userParts.push({ 
+                    inlineData: {
+                        data: attachedImage.data, 
+                        mimeType: attachedImage.mimeType
+                    }
+                });
+                
+                if (userText === "") {
+                    textToSend = "Tolong jelaskan gambar ini.";
+                }
+            }
+            
+            userParts.push({ text: textToSend });
+            
+            const lowerCaseText = userText.toLowerCase();
+            const nameKeywords = ["siapa nama anda", "siapa yang membuat anda", "namamu siapa", "kamu siapa", "siapa kamu", "nama lu siapa", "kamu siapa?", "siapa yang buat", "dibuat siapa", "anda dibuat siapa"];
+            
+            let customResponse = null;
+            for (const keyword of nameKeywords) {
+                if (lowerCaseText.includes(keyword) && attachedImage === null) {
+                    customResponse = CUSTOM_NAME_RESPONSE;
+                    break;
+                }
+            }
+
+            if (customResponse) {
+                inputField.value = '';
+                displayMessage(customResponse, 'ai'); 
+                history.push({ role: "user", parts: userParts }); 
+                history.push({ role: "model", parts: [{ text: customResponse }] });
+                inputField.focus();
+                chatOutput.scrollTop = chatOutput.scrollHeight;
+                
+                attachedImage = null;
+                fileInput.value = '';
+                imagePreviewContainer.style.display = 'none';
+                
+                return; 
+            }
+
+            history.push({ role: "user", parts: userParts });
+
+            inputField.value = '';
+            
+            attachedImage = null;
+            fileInput.value = '';
+            imagePreviewContainer.style.display = 'none';
+            
+            sendButton.disabled = true;
+            sendButton.innerHTML = '<div class="loading"></div>';
+            
+            const loadingMessageDiv = displayMessage('...', 'ai'); 
+            
+            try {
+                const response = await fetch(API_URL, { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        history: history, 
+                        model: MODEL_NAME 
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Kesalahan Koneksi API: ${response.status}. Detail: ${errorData.error || errorData.message || 'Server Vercel gagal.'}`);
+                }
+
+                const data = await response.json();
+                
+                const aiResponseText = data.text || "Maaf, Vercel Function mengembalikan format yang tidak dikenali.";
+
+                if (loadingMessageDiv) {
+                    loadingMessageDiv.remove();
+                }
+                
+                displayMessage(aiResponseText, 'ai');
+                
+                history.push({ role: "model", parts: [{ text: aiResponseText }] });
+
+            } catch (error) {
+                console.error('Error saat mengambil data:', error);
+                
+                const errorMessage = error.message.includes('SyntaxError') ? 
+                    "Error: Koneksi terputus. Cek status Vercel Function Anda." : error.message;
+
+                if (loadingMessageDiv) {
+                    loadingMessageDiv.remove();
+                }
+                
+                displayMessage(`⚠️ Error: ${errorMessage}`, 'ai');
+                
+            } finally {
+                sendButton.disabled = false;
+                sendButton.innerHTML = 'Kirim';
+                inputField.focus();
+                chatOutput.scrollTop = chatOutput.scrollHeight;
+            }
+        }
+
+        // --- Inisialisasi Event Listeners setelah DOM dimuat ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inisialisasi semua elemen HTML
+            inputField = document.getElementById('user-input');
+            sendButton = document.getElementById('send-button');
+            chatOutput = document.getElementById('chat-output');
+            themeToggle = document.getElementById('theme-toggle');
+            welcomeMessage = document.getElementById('welcome-message');
+            fileInput = document.getElementById('file-input');
+            attachButton = document.getElementById('attach-button');
+            imagePreviewContainer = document.getElementById('image-preview-container');
+            imagePreview = document.getElementById('image-preview');
+            removeImageButton = document.getElementById('remove-image-button');
+            
+            
+            // **Pemasangan Event Listeners Utama**
+            sendButton.addEventListener('click', sendMessage);
+            
+            inputField.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            themeToggle.addEventListener('click', () => {
+                const root = document.documentElement;
+                const currentBg = root.style.getPropertyValue('--background-color');
+                
+                if (currentBg === '#0c0c0c') { 
+                    root.style.setProperty('--background-color', '#F0F2F5'); 
+                    root.style.setProperty('--container-bg', '#FFFFFF');
+                    root.style.setProperty('--text-color', '#333333');
+                    root.style.setProperty('--input-bg', '#E9ECEF');
+                    root.style.setProperty('--primary-color', '#007bff'); 
+                    root.style.setProperty('--border-color', '#D0D0D0');
+                    themeToggle.textContent = 'Dark/Light';
+                } else {
+                    root.style.setProperty('--background-color', '#0c0c0c');
+                    root.style.setProperty('--container-bg', '#1a1a1a');
+                    root.style.setProperty('--text-color', '#ffffff');
+                    root.style.setProperty('--input-bg', '#2b2b2b');
+                    root.style.setProperty('--primary-color', '#3b82f6');
+                    root.style.setProperty('--border-color', '#333333');
+                    themeToggle.textContent = 'Light/Dark';
+                }
+            });
+
+
+            // --- LOGIKA LAMPIRKAN GAMBAR ---
+            attachButton.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    if (!file.type.startsWith('image/')) {
+                        alert("Hanya file gambar yang diizinkan.");
+                        fileInput.value = ''; 
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        attachedImage = {
+                            mimeType: file.type,
+                            data: e.target.result.split(',')[1] 
+                        };
+                        
+                        imagePreview.src = e.target.result;
+                        imagePreviewContainer.style.display = 'flex';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            removeImageButton.addEventListener('click', () => {
+                attachedImage = null;
+                fileInput.value = ''; 
+                imagePreview.src = '#';
+                imagePreviewContainer.style.display = 'none';
+            });
+            
+            // Pasang event listener untuk tombol "Bacakan" pada pesan sambutan awal
+            const initialReadButton = document.querySelector('.initial-greeting .read-button');
+            if (initialReadButton) {
+                initialReadButton.addEventListener('click', function() {
+                    bacakanTeks(this);
+                });
+            }
+
+            // Tampilkan welcome message saat awal
+            if (welcomeMessage) {
+                welcomeMessage.style.display = 'flex'; 
+            }
+        });
+        // --- AKHIR DOMContentLoaded ---
+    </script>
+</body>
+</html>
