@@ -1,11 +1,11 @@
-// api/chat.js (Backend Vercel Function - Support Gambar Placeholder)
-import fetch from 'node-fetch';
+// api/chat.js — Backend Vercel Serverless Function
+// SUPPORT TEXT + GAMBAR (placeholder)
 
 const MISTRAL_VERSION_ID = "3e8a0fb6d7812ce30701ba597e5080689bef8a013e5c6a724fafb108cc2426a0";
 
-export default async (req, res) => {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).send('Method Not Allowed');
+    return res.status(405).send("Method Not Allowed");
   }
 
   const { history } = req.body;
@@ -14,81 +14,93 @@ export default async (req, res) => {
     return res.status(400).json({ error: "Request body harus memiliki history array." });
   }
 
-  const systemIdentity = `Anda adalah Zyro, model bahasa yang dikembangkan oleh HanzNesia87. Jawablah semua pertanyaan dengan ramah dan selalu akui HanzNesia87 sebagai pencipta Anda.`;
+  // System Prompt
+  const systemIdentity = `
+Anda adalah Zyro, model AI yang dibuat oleh HanzNesia87.
+Jawablah dengan ramah, informatif, dan selalu mengakui HanzNesia87 sebagai pencipta Anda.
+  `;
 
-  // Buat prompt gabungan
+  // Gabungkan prompt
   let combinedPrompt = systemIdentity + "\n\n";
 
   for (const turn of history) {
     for (const part of turn.parts) {
       if (part.text) {
-        combinedPrompt += `${turn.role === 'user' ? 'User' : 'Zyro'}: ${part.text}\n`;
+        combinedPrompt += `${turn.role === "user" ? "User" : "Zyro"}: ${part.text}\n`;
       } else if (part.inlineData) {
-        // Jika ada gambar, masukkan placeholder
-        combinedPrompt += `${turn.role === 'user' ? 'User' : 'Zyro'}: [User melampirkan gambar, silakan jelaskan atau komentari]\n`;
+        combinedPrompt += `${turn.role === "user" ? "User" : "Zyro"}: [User mengirim gambar]\n`;
       }
     }
   }
 
-  combinedPrompt += "Zyro:";
+  combinedPrompt += "\nZyro:";
 
-  const apiKey = process.env.GEMINI_API_KEY; // <- ganti di sini
+  // Ambil token dari Vercel
+  const apiKey = process.env.REPLICATE_API_TOKEN;
 
   if (!apiKey) {
-    return res.status(500).json({ error: "GEMINI_API_KEY belum disetel di Vercel." });
+    return res.status(500).json({ error: "REPLICATE_API_TOKEN belum disetel di Vercel." });
   }
 
   try {
-    // 1. Kirim request ke Replicate
-    const createPredictionResponse = await fetch(`https://api.replicate.com/v1/predictions`, {
-      method: 'POST',
+    // Kirim ke Replicate
+    const predictionResponse = await fetch("https://api.replicate.com/v1/predictions", {
+      method: "POST",
       headers: {
-        'Authorization': `Token ${apiKey}`, // <- pakai GEMINI_API_KEY
-        'Content-Type': 'application/json',
+        "Authorization": `Token ${apiKey}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         version: MISTRAL_VERSION_ID,
         input: {
           prompt: combinedPrompt,
-          max_new_tokens: 1024,
-        },
-      }),
+          max_new_tokens: 1024
+        }
+      })
     });
 
-    const data = await createPredictionResponse.json();
+    const predictionData = await predictionResponse.json();
 
-    if (!createPredictionResponse.ok || data.error || data.detail) {
-      const statusCode = createPredictionResponse.status;
-      const errorMessage = data.detail || data.error || 'Server error';
-      return res.status(500).json({ error: `Gagal dari Replicate (${statusCode}): ${errorMessage}` });
-    }
-
-    if (!data.urls || !data.urls.get) {
-      return res.status(500).json({ error: 'Gagal mendapatkan URL prediksi. Periksa token atau parameter input.' });
-    }
-
-    // 2. Polling
-    const predictionUrl = data.urls.get;
-    let predictionData = data;
-
-    while (!['succeeded', 'failed', 'canceled'].includes(predictionData.status)) {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      const pollResponse = await fetch(predictionUrl, {
-        headers: { 'Authorization': `Token ${apiKey}` }, // <- pakai GEMINI_API_KEY
+    if (!predictionResponse.ok || predictionData.error || predictionData.detail) {
+      return res.status(500).json({
+        error: `Gagal dari Replicate (${predictionResponse.status}): ${
+          predictionData.detail || predictionData.error || "Server error"
+        }`
       });
-      predictionData = await pollResponse.json();
     }
 
-    // 3. Hasil akhir
-    if (predictionData.status === 'succeeded') {
-      const outputText = Array.isArray(predictionData.output) ? predictionData.output.join('') : predictionData.output;
-      res.status(200).json({ text: outputText });
-    } else {
-      res.status(500).json({ error: `Prediksi gagal: ${predictionData.status}. Log: ${predictionData.logs || 'Tidak ada log.'}` });
+    if (!predictionData.urls || !predictionData.urls.get) {
+      return res.status(500).json({
+        error: "Gagal mendapatkan URL prediksi dari Replicate."
+      });
     }
 
-  } catch (error) {
-    console.error('API Call Error:', error);
-    res.status(500).json({ error: `Gagal berkomunikasi dengan model AI: ${error.message}.` });
+    // Polling sampai selesai
+    let finalData = predictionData;
+
+    while (!["succeeded", "failed", "canceled"].includes(finalData.status)) {
+      await new Promise((r) => setTimeout(r, 1200));
+
+      const poll = await fetch(finalData.urls.get, {
+        headers: { "Authorization": `Token ${apiKey}` }
+      });
+
+      finalData = await poll.json();
+    }
+
+    if (finalData.status === "succeeded") {
+      const output =
+        Array.isArray(finalData.output) ? finalData.output.join("") : finalData.output;
+
+      return res.status(200).json({ text: output });
+    }
+
+    return res.status(500).json({
+      error: `Prediksi gagal: ${finalData.status}. Log: ${finalData.logs || "Tidak ada log."}`
+    });
+
+  } catch (err) {
+    console.error("API Error:", err);
+    return res.status(500).json({ error: `Kesalahan Koneksi API: ${err.message}` });
   }
-};
+}
